@@ -1,0 +1,62 @@
+---
+title: "Ozone Level Prediction"
+subtitle: "My first Shiny App"
+author: "Arthur"
+date: "4/9/2020"
+font-family: 'Helvetica'
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+* Ozone is formed from dioxygen by the action of ultraviolet light (UV) and electrical discharges within the Earth's atmosphere. When inhaled, ozone can damage the lungs. 
+
+* It might be useful if we can predict ozone level from some ordinary measurements like temperature and wind speed. 
+
+* This app presents a function for ozone level prediction based on an existing data set from the ElemStatLearn R package Version 2015.6.26.
+
+###### App:<https://arthurwang95.shinyapps.io/ozone/>  
+
+###### Code: <https://github.com/arthurwang95/OzoneApp.git>
+
+## User Interface
+
+![](UI.png){#id .class width=80% height=100%}
+
+## Prediction Model
+
+* About Ozone data set  
+```{r echo = FALSE, message=FALSE}
+load("ozone.RData")
+head(ozone, 2)
+```
+
+
+* A simple linear regression model is used for prediction by either temperature or wind speed.
+```{r echo = FALSE, message=FALSE}
+ mod1 <- lm(ozone ~ wind, data = ozone)
+ mod2 <- lm(ozone ~ temperature, data = ozone)
+```
+Predicted by Wind (Tab 1)
+
+Ozone level = `r round(mod1$coefficients[1],2)` + `r round(mod1$coefficients[2],2)` * Wind
+
+Ozone ~ Temperature (Tab 2)    
+
+Ozone level = `r round(mod2$coefficients[1],2)` + `r round(mod2$coefficients[2],2)` * Temperature
+
+## Sample plot for Ozone ~ Temperature
+
+```{r echo = FALSE, message=FALSE}
+library(plotly)
+
+plot_ly(x = ~temperature, y = ~ozone, data = ozone, type = "scatter", mode = "markers", size = 2) %>%
+        add_trace(x = ~temperature, y = ~predict(mod2), mode = "lines", line = list(color = 'rgb(22, 96,    
+                  167)', width = 4)) %>% layout(showlegend = F, title = "Ozone Level by Temperature")
+
+```
+
